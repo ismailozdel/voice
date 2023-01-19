@@ -1,0 +1,4 @@
+front/client/build/
+front/client/node_modules/
+
+back/venv/
