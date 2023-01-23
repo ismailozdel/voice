@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 
-//const socket = io('http://localhost:8000/')
-const socket = io('https://test.heynova.work/',{
+const socket = io('http://localhost:8000/',{
+  transports:['websocket'],
+        cors:{
+          origin:"http://localhost:5000/"
+        }
+})
+/*const socket = io('https://test.heynova.work/',{
   transports:['websocket'],
         cors:{
           origin:"https://test2.heynova.work/"
         }
-})
+})*/
 function VoiceChat() {
   const [audioContext, setAudioContext] = useState(null)
   const [microphoneStream, setMicrophoneStream] = useState(null)

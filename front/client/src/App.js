@@ -14,10 +14,10 @@ function App() {
 
   useEffect(() => {
     if(buttonStatus === true){
-      const socket = io("https://test.heynova.work/",{
+      const socket = io("http://localhost:8000",{
         transports:['websocket'],
         cors:{
-          origin:"https://test2.heynova.work/"
+          origin:"http://localhost:5000/"
         }
       })
 
