@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import io from 'socket.io-client'
 
-const socket = io('http://localhost:8000/',{
-  transports:['websocket'],
-        cors:{
-          origin:"http://localhost:5000/"
-        }
+const socket = io('http://localhost:8000/', {
+  transports: ['websocket'],
+  cors: {
+    origin: "http://localhost:5000/"
+  }
 })
+
+
 /*const socket = io('https://test.heynova.work/',{
   transports:['websocket'],
         cors:{
@@ -14,6 +16,22 @@ const socket = io('http://localhost:8000/',{
         }
 })*/
 function VoiceChat() {
+  const [username, setUsername] = useState("");
+  const [room, setRoom] = useState("");
+  const handleRoom = (e) => {
+    const inputMessage = e.target.value;
+    setRoom(inputMessage);
+  };
+  const handleUsername = (e) => {
+    const inputMessage = e.target.value;
+    setUsername(inputMessage);
+  }
+  const handleSubmitRoom = () => {
+    if (!room) {
+      return;
+    }
+    socket.emit("join_room", { "room": room, "username": username });
+  };
   const [audioContext, setAudioContext] = useState(null)
   const [microphoneStream, setMicrophoneStream] = useState(null)
   const [isConnected, setIsConnected] = useState(false)
@@ -51,9 +69,8 @@ function VoiceChat() {
       // get microphone output data
       const microphoneOutput = event.inputBuffer.getChannelData(0)
       // send it to the server over the Socket.IO connection
-      socket.emit('audio_data', microphoneOutput)
+      socket.emit('audio_data', { "audio": microphoneOutput })
     }
-
     // handle audio data received from the server
     socket.on('audio_data', (data) => {
 
@@ -63,10 +80,10 @@ function VoiceChat() {
 
       const audioBuffer = audioContext.createBuffer(1, test.length, audioContext.sampleRate)
       // create an audio buffer from the received data
-      
+
       audioBuffer.copyToChannel(new Float32Array(data), 0)
-      
-      
+
+
       // create an audio source from the buffer
       const source = audioContext.createBufferSource()
       source.buffer = audioBuffer
@@ -88,9 +105,17 @@ function VoiceChat() {
       setIsConnected(false)
     }
   }, [audioContext, microphoneStream])
-
+  /**
+   *       <input type="text" value={username} onChange={handleUsername} placeholder="username" />
+      <input type="text" value={room} onChange={handleRoom} placeholder="room" />
+      <button onClick={handleSubmitRoom}>submit</button>
+   * 
+   */
   return (
     <div>
+      <input type="text" value={username} onChange={handleUsername} placeholder="username" />
+      <input type="text" value={room} onChange={handleRoom} placeholder="room" />
+      <button onClick={handleSubmitRoom}>submit</button>
       {isConnected ? 'Connected to voice chat' : 'Connecting to voice chat...'}
     </div>
   )

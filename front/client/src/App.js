@@ -11,10 +11,10 @@ function App() {
   const [loading,setLoading] = useState(true)
   const [buttonStatus,setButtonStatus] = useState(false)
   const [voiceButtonStatus,setVoiceButtonStatus] = useState(false)
-
+ 
   useEffect(() => {
     if(buttonStatus === true){
-      const socket = io("http://localhost:8000",{
+       const socket = io("http://localhost:8000",{
         transports:['websocket'],
         cors:{
           origin:"http://localhost:5000/"
@@ -36,6 +36,7 @@ function App() {
       return function cleanup(){
         socket.disconnect()
       }
+
     }
   },[buttonStatus])
 
@@ -71,7 +72,6 @@ function App() {
         </>}
 
       <h1>App</h1>
-
           {!voiceButtonStatus ? (
             <button onClick={voiceButtonHandleClick}>Connect voice channel</button>
           ): <>
